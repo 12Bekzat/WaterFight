@@ -10,12 +10,12 @@ namespace Warships.Controllers
         private const char VIEW_CELL = '▒';
         private const char DESTROY_CELL = '▓';
         public Game _game { get; private set; }
-        private List<Cell> _cells { get; set; }
+        private List<Cell> _cells { get; set; } = new List<Cell>();
         public GameController(Game game)
         {
             _game = game;
 
-            for(int y = 0; y < 10; y++)
+            for (int y = 0; y < 10; y++)
             {
                 for (int x = 0; x < 10; x++)
                 {
@@ -33,10 +33,15 @@ namespace Warships.Controllers
                 XCoor = x,
                 YCoor = y,
                 IsAlive = true,
-                Symbol = (char)9
+                Symbol = '○'
             };
 
             ship.IsDestroy = new bool[type - 1];
+
+            for (int i = 0; i < type - 1; i++)
+            {
+                ship.IsDestroy[i] = true;
+            }
 
             switch (direction)
             {
@@ -69,27 +74,32 @@ namespace Warships.Controllers
             _game.Ships.Add(ship);
         }
 
-        public void TakeDamage(Ship ship)
+        public bool TakeDamage(Ship ship)
         {
             if (ship != null)
             {
                 ship.Health--;
+
                 if (ship.Health <= 0)
                 {
                     ship.IsAlive = false;
                 }
+                return true;
             }
+            else return false;
         }
 
         public void Shoot(int x, int y)
         {
-            TakeDamage(CheckShoot(x, y));
-            foreach(var c in _cells)
+            if (!TakeDamage(CheckShoot(x, y)))
             {
-                if (c.X == x && c.Y == y)
+                foreach (var c in _cells)
                 {
-                    c.IsAlive = false;
-                    c.ViewSym = DESTROY_CELL;
+                    if (c.X == x && c.Y == y)
+                    {
+                        c.IsAlive = false;
+                        c.ViewSym = DESTROY_CELL;
+                    }
                 }
             }
         }
@@ -109,6 +119,14 @@ namespace Warships.Controllers
                                 if (xCoor == ship.XCoor && y == ship.YCoor && ship.IsDestroy[j] == true)
                                 {
                                     ship.IsDestroy[j] = false;
+                                    foreach (var c in _cells)
+                                    {
+                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
+                                        {
+                                            c.IsAlive = false;
+                                            c.ViewSym = ship.Symbol;
+                                        }
+                                    }
                                     return ship;
                                 }
                             }
@@ -120,6 +138,14 @@ namespace Warships.Controllers
                                 if (x == ship.XCoor && x == ship.YCoor && ship.IsDestroy[j] == true)
                                 {
                                     ship.IsDestroy[j] = false;
+                                    foreach (var c in _cells)
+                                    {
+                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
+                                        {
+                                            c.IsAlive = false;
+                                            c.ViewSym = ship.Symbol;
+                                        }
+                                    }
                                     return ship;
                                 }
                             }
@@ -131,6 +157,14 @@ namespace Warships.Controllers
                                 if (x == ship.XCoor && yCoor == ship.YCoor && ship.IsDestroy[j] == true)
                                 {
                                     ship.IsDestroy[j] = false;
+                                    foreach (var c in _cells)
+                                    {
+                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
+                                        {
+                                            c.IsAlive = false;
+                                            c.ViewSym = ship.Symbol;
+                                        }
+                                    }
                                     return ship;
                                 }
                             }
@@ -142,6 +176,14 @@ namespace Warships.Controllers
                                 if (xCoor == ship.XCoor && y == ship.YCoor && ship.IsDestroy[j] == true)
                                 {
                                     ship.IsDestroy[j] = false;
+                                    foreach (var c in _cells)
+                                    {
+                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
+                                        {
+                                            c.IsAlive = false;
+                                            c.ViewSym = ship.Symbol;
+                                        }
+                                    }
                                     return ship;
                                 }
                             }
@@ -152,9 +194,19 @@ namespace Warships.Controllers
             return null;
         }
 
-        public void Draw()
+        public void DrawCell(int xSt, int ySt)
         {
+            for (int i = 0, k = 0; i < 10; i++)
+            {
 
+                for (int j = 0; j < 10; j++)
+                {
+                    Console.SetCursorPosition(xSt + j, ySt + i);
+                    Console.Write(_cells[k].ViewSym);
+                    k++;
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
