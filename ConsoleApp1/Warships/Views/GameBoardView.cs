@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Warships.Views
 {
-	class GameBoardView
+	public class GameBoardView
 	{
+		public void Draw()
+		{
+
+		}
 	}
 }

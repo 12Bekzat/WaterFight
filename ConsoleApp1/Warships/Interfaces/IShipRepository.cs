@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Warships.Interfaces;
+using Warships.Entities;
 
-namespace Warships.Entities
+namespace Warships.Interfaces
 {
-    public class Ship : BaseEntity, IShipRepository
-    {
+	public interface IShipRepository
+	{
         public Direction Direction { get; set; }
         public int Type { get; set; }
         public int Health { get; set; }

@@ -7,10 +7,21 @@ namespace Warships.Controllers
 {
     public class GameController
     {
+        private const char VIEW_CELL = '▒';
+        private const char DESTROY_CELL = '▓';
         public Game _game { get; private set; }
+        private List<Cell> _cells { get; set; }
         public GameController(Game game)
         {
             _game = game;
+
+            for(int y = 0; y < 10; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    _cells.Add(new Cell { IsAlive = true, X = x, Y = y, ViewSym = VIEW_CELL });
+                }
+            }
         }
 
         public void AddShip(int health, int type, int x, int y, Direction direction)
@@ -73,7 +84,14 @@ namespace Warships.Controllers
         public void Shoot(int x, int y)
         {
             TakeDamage(CheckShoot(x, y));
-            _game.Cells.Add(new Cell { IsAlive = false, X = x, Y = y });
+            foreach(var c in _cells)
+            {
+                if (c.X == x && c.Y == y)
+                {
+                    c.IsAlive = false;
+                    c.ViewSym = DESTROY_CELL;
+                }
+            }
         }
 
         public Ship CheckShoot(int xCoor, int yCoor)
