@@ -30,11 +30,36 @@ namespace Warships.Controllers
             {
                 Health = health,
                 Type = type,
-                XCoor = x,
-                YCoor = y,
                 IsAlive = true,
                 Symbol = '○'
             };
+
+            ship.XCoor = new int[ship.Type - 1];
+            ship.YCoor = new int[ship.Type - 1];
+
+            for (int i = 0; i < ship.Type - 1; i++)
+            {
+                switch (ship.Direction)
+                {
+                    case Direction.Up:
+                        ship.XCoor[i] = x;
+                        ship.YCoor[i] = y - i;
+                        break;
+                    case Direction.Left:
+                        ship.XCoor[i] = x + i;
+                        ship.YCoor[i] = y;
+                        break;
+                    case Direction.Right:
+                        ship.XCoor[i] = x - i;
+                        ship.YCoor[i] = y;
+                        break;
+                    case Direction.Down:
+                        ship.XCoor[i] = x;
+                        ship.YCoor[i] = y + i;
+                        break;
+                }
+            }
+
 
             ship.IsDestroy = new bool[type - 1];
 
@@ -74,7 +99,7 @@ namespace Warships.Controllers
             _game.Ships.Add(ship);
         }
 
-        public bool TakeDamage(Ship ship)
+        public void TakeDamage(Ship ship)
         {
             if (ship != null)
             {
@@ -84,110 +109,50 @@ namespace Warships.Controllers
                 {
                     ship.IsAlive = false;
                 }
-                return true;
             }
-            else return false;
         }
 
         public void Shoot(int x, int y)
         {
-            if (!TakeDamage(CheckShoot(x, y)))
+            Ship victim = new Ship();
+            Cell victimCell = new Cell();
+            foreach (var cell in _cells)
             {
-                foreach (var c in _cells)
+                if (cell.X == x && cell.Y == y)
                 {
-                    if (c.X == x && c.Y == y)
-                    {
-                        c.IsAlive = false;
-                        c.ViewSym = DESTROY_CELL;
-                    }
+                    victim = CheckShoot(x, y, ref victimCell);
+                    TakeDamage(victim);
+                    break;
+                }
+            }
+            foreach (var c in _cells)
+            {
+                if (c.X == x && c.Y == y && victimCell.IsShot == true)
+                {
+                    c.IsAlive = false;
+                    c.ViewSym = victimCell.ViewSym;
+                }
+                if (c.X == x && c.Y == y && victimCell.IsShot == false)
+                {
+                    c.IsAlive = false;
+                    c.ViewSym = DESTROY_CELL;
                 }
             }
         }
 
-        public Ship CheckShoot(int xCoor, int yCoor)
+        public Ship CheckShoot(int xCoor, int yCoor, ref Cell cell)
         {
             foreach (var ship in _game.Ships)
             {
-                for (int i = 0; i < ship.Type; i++)
+                for (int i = 0; i < ship.Type - 1; i++)
                 {
-                    switch (ship.Direction)
+                    if (ship.XCoor[i] == xCoor && ship.YCoor[i] == yCoor)
                     {
-                        case Direction.Up:
-                            for (int y = yCoor, j = 0; y > yCoor - ship.Type + 1; y--)
-                            {
-                                j++;
-                                if (xCoor == ship.XCoor && y == ship.YCoor && ship.IsDestroy[j] == true)
-                                {
-                                    ship.IsDestroy[j] = false;
-                                    foreach (var c in _cells)
-                                    {
-                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
-                                        {
-                                            c.IsAlive = false;
-                                            c.ViewSym = ship.Symbol;
-                                        }
-                                    }
-                                    return ship;
-                                }
-                            }
-                            break;
-                        case Direction.Left:
-                            for (int x = xCoor, j = 0; x < xCoor + ship.Type - 1; x++)
-                            {
-                                j++;
-                                if (x == ship.XCoor && x == ship.YCoor && ship.IsDestroy[j] == true)
-                                {
-                                    ship.IsDestroy[j] = false;
-                                    foreach (var c in _cells)
-                                    {
-                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
-                                        {
-                                            c.IsAlive = false;
-                                            c.ViewSym = ship.Symbol;
-                                        }
-                                    }
-                                    return ship;
-                                }
-                            }
-                            break;
-                        case Direction.Right:
-                            for (int x = xCoor, j = 0; x > xCoor - ship.Type + 1; x--)
-                            {
-                                j++;
-                                if (x == ship.XCoor && yCoor == ship.YCoor && ship.IsDestroy[j] == true)
-                                {
-                                    ship.IsDestroy[j] = false;
-                                    foreach (var c in _cells)
-                                    {
-                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
-                                        {
-                                            c.IsAlive = false;
-                                            c.ViewSym = ship.Symbol;
-                                        }
-                                    }
-                                    return ship;
-                                }
-                            }
-                            break;
-                        case Direction.Down:
-                            for (int y = yCoor, j = 0; y < yCoor + ship.Type - 1; y++)
-                            {
-                                j++;
-                                if (xCoor == ship.XCoor && y == ship.YCoor && ship.IsDestroy[j] == true)
-                                {
-                                    ship.IsDestroy[j] = false;
-                                    foreach (var c in _cells)
-                                    {
-                                        if (c.X == ship.XCoor && c.Y == ship.YCoor)
-                                        {
-                                            c.IsAlive = false;
-                                            c.ViewSym = ship.Symbol;
-                                        }
-                                    }
-                                    return ship;
-                                }
-                            }
-                            break;
+                        cell.ViewSym = ship.Symbol;
+                        cell.X = xCoor;
+                        cell.Y = yCoor;
+                        cell.IsShot = true;
+                        return ship;
                     }
                 }
             }
