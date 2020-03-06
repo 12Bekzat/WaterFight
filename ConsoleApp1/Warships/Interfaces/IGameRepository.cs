@@ -8,6 +8,6 @@ namespace Warships.Interfaces
 	public interface IGameRepository
 	{
 		public IList<Ship> Ships { get; set; } 
-		public User Player { get; set; }
+		//public User Player { get; set; }
 	}
 }
