@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Warships.Controllers;
 
 namespace Warships.Views
 {
     public class GameBoardView
     {
-
+        private GameController controller { get; }
         public void DrawBorder(int xSt, int ySt, int maxX, int maxY)
 
         {
@@ -25,25 +26,8 @@ namespace Warships.Views
                 for (int x = 0; x < maxX; x++)
                 {
                     Console.SetCursorPosition(xSt + x + 1, ySt + y + 1);
-                    Console.Write(" ");
-                }
-                if (y != 0 || y != maxY - 1)
-                {
-                    Console.SetCursorPosition(xSt + maxX + 1, ySt + y + 1);
-                    Console.WriteLine(y);
-                }
-                else if (y == 0 || y == maxY - 1)
-                {
-                    Console.SetCursorPosition(xSt + maxX, ySt + y + 1);
-                    Console.WriteLine(' ');
-                }
-            }
-            Console.Write(' ');
-            for (int x = 0; x < maxX; x++)
-            {
-                Console.SetCursorPosition(xSt + x + 1, ySt + maxY + 1);
-                Console.Write($"{x}");
 
+                }
             }
         }
     }

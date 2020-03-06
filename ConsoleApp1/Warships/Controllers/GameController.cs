@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Warships.Entities;
+using Warships.Views;
 
 namespace Warships.Controllers
 {
@@ -9,17 +10,22 @@ namespace Warships.Controllers
     {
         private const char VIEW_CELL = '▒';
         private const char DESTROY_CELL = '▓';
+        private const char SHIP_CELL = 'o';
         public Game _game { get; private set; }
-        private List<Cell> _cells { get; set; } = new List<Cell>();
+        public List<CellState> _cells { get; set; } = new List<CellState>();
         public GameController(Game game)
         {
             _game = game;
+            InitGameBoard();
+        }
 
+        private void InitGameBoard()
+        {
             for (int y = 0; y < 10; y++)
             {
                 for (int x = 0; x < 10; x++)
                 {
-                    _cells.Add(new Cell { IsAlive = true, X = x, Y = y, ViewSym = VIEW_CELL });
+                    _cells.Add(new CellState { Cell = new Cell { IsAlive = true, X = x, Y = y } , State = VIEW_CELL });
                 }
             }
         }
@@ -36,6 +42,8 @@ namespace Warships.Controllers
 
             ship.XCoor = new int[type];
             ship.YCoor = new int[type];
+
+            _cells.Find(x => x.);
 
             for (int i = 0; i < type; i++)
             {
@@ -54,7 +62,7 @@ namespace Warships.Controllers
                     ship.XCoor[i] = x - i;
                     ship.YCoor[i] = y;
                 }
-                else
+                else if (direction == Direction.Down)
                 {
                     ship.XCoor[i] = x;
                     ship.YCoor[i] = y + i;
@@ -83,10 +91,13 @@ namespace Warships.Controllers
                 if (ship.Health <= 0)
                 {
                     ship.IsAlive = false;
-                    //foreach(var c in _cells)
-                    //{
-                    //    if(c.X == ship.XCoor[0] && c.Y == )
-                    //}
+                    for(int i = 0; i < _cells.Count; i++)
+                    {
+                        if(_cells[i].IsShip)
+                        {
+                            _cells.Find
+                        }
+                    }
                 }
             }
         }
@@ -106,14 +117,16 @@ namespace Warships.Controllers
             }
             foreach (var c in _cells)
             {
-                if (c.X == x && c.Y == y && victimCell.IsShot == true)
+                if (c.X == x && c.Y == y && victimCell.IsShip == true)
                 {
                     c.IsAlive = false;
+                    c.IsShip = true;
                     c.ViewSym = victimCell.ViewSym;
                 }
-                if (c.X == x && c.Y == y && victimCell.IsShot == false)
+                if (c.X == x && c.Y == y && victimCell.IsShip == false)
                 {
                     c.IsAlive = false;
+                    c.IsShip = false;
                     c.ViewSym = DESTROY_CELL;
                 }
             }
@@ -121,18 +134,16 @@ namespace Warships.Controllers
 
         public Ship CheckShoot(int xCoor, int yCoor, ref Cell cell)
         {
-            int c = 0;
             foreach (var ship in _game.Ships)
             {
                 for (int i = 0; i < ship.Type; i++)
                 {
                     if (ship.XCoor[i] == xCoor && ship.YCoor[i] == yCoor)
                     {
-                        c = 1;
                         cell.ViewSym = ship.Symbol;
                         cell.X = xCoor;
                         cell.Y = yCoor;
-                        cell.IsShot = true;
+                        cell.IsShip = true;
                         return ship;
                     }
                 }
@@ -144,7 +155,6 @@ namespace Warships.Controllers
         {
             for (int i = 0, k = 0; i < 10; i++)
             {
-
                 for (int j = 0; j < 10; j++)
                 {
                     Console.SetCursorPosition(xSt + j, ySt + i);
