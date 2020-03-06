@@ -34,67 +34,42 @@ namespace Warships.Controllers
                 Symbol = '○'
             };
 
-            ship.XCoor = new int[ship.Type - 1];
-            ship.YCoor = new int[ship.Type - 1];
+            ship.XCoor = new int[type];
+            ship.YCoor = new int[type];
 
-            for (int i = 0; i < ship.Type - 1; i++)
+            for (int i = 0; i < type; i++)
             {
-                switch (ship.Direction)
+                if (direction == Direction.Up)
                 {
-                    case Direction.Up:
-                        ship.XCoor[i] = x;
-                        ship.YCoor[i] = y - i;
-                        break;
-                    case Direction.Left:
-                        ship.XCoor[i] = x + i;
-                        ship.YCoor[i] = y;
-                        break;
-                    case Direction.Right:
-                        ship.XCoor[i] = x - i;
-                        ship.YCoor[i] = y;
-                        break;
-                    case Direction.Down:
-                        ship.XCoor[i] = x;
-                        ship.YCoor[i] = y + i;
-                        break;
+                    ship.XCoor[i] = x;
+                    ship.YCoor[i] = y - i;
+                }
+                else if (direction == Direction.Left)
+                {
+                    ship.XCoor[i] = x + i;
+                    ship.YCoor[i] = y;
+                }
+                else if (direction == Direction.Right)
+                {
+                    ship.XCoor[i] = x - i;
+                    ship.YCoor[i] = y;
+                }
+                else
+                {
+                    ship.XCoor[i] = x;
+                    ship.YCoor[i] = y + i;
                 }
             }
 
 
-            ship.IsDestroy = new bool[type - 1];
+            ship.IsDestroy = new bool[type];
 
-            for (int i = 0; i < type - 1; i++)
+            for (int i = 0; i < type; i++)
             {
                 ship.IsDestroy[i] = true;
             }
 
-            switch (direction)
-            {
-                case Direction.Up:
-                    if (y > type - 2)
-                    {
-                        ship.Direction = direction;
-                    }
-                    break;
-                case Direction.Left:
-                    if (x < type - 2)
-                    {
-                        ship.Direction = direction;
-                    }
-                    break;
-                case Direction.Right:
-                    if (x > type - 2)
-                    {
-                        ship.Direction = direction;
-                    }
-                    break;
-                case Direction.Down:
-                    if (y < type - 2)
-                    {
-                        ship.Direction = direction;
-                    }
-                    break;
-            }
+            ship.Direction = direction;
 
             _game.Ships.Add(ship);
         }
@@ -108,6 +83,10 @@ namespace Warships.Controllers
                 if (ship.Health <= 0)
                 {
                     ship.IsAlive = false;
+                    //foreach(var c in _cells)
+                    //{
+                    //    if(c.X == ship.XCoor[0] && c.Y == )
+                    //}
                 }
             }
         }
@@ -142,12 +121,14 @@ namespace Warships.Controllers
 
         public Ship CheckShoot(int xCoor, int yCoor, ref Cell cell)
         {
+            int c = 0;
             foreach (var ship in _game.Ships)
             {
-                for (int i = 0; i < ship.Type - 1; i++)
+                for (int i = 0; i < ship.Type; i++)
                 {
                     if (ship.XCoor[i] == xCoor && ship.YCoor[i] == yCoor)
                     {
+                        c = 1;
                         cell.ViewSym = ship.Symbol;
                         cell.X = xCoor;
                         cell.Y = yCoor;

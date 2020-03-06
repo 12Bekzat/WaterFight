@@ -2,61 +2,42 @@
 
 namespace ConsoleApp2
 {
-    public interface Iterator<T>
-    {
-        public T GetNext();
-        public T GetPrev();
-
-        public bool MoveNext();
-        public bool MovePrev();
-    }
-
-    public class LinkedList<T> : Iterator<T>
-    {
-        private T CurrentItem { get; set; }
-        private T Next { get; set; }
-        private T Prev { get; set; }
-
-        public void AddLast(T item)
-        {
-            Prev = CurrentItem;
-            CurrentItem = item;
-        }
-
-
-
-        public T GetNext()
-        {
-            return Next;
-        }
-
-        public T GetPrev()
-        {
-            return Prev;
-        }
-
-        public bool MoveNext()
-        {
-            if(CurrentItem == null)
-            {
-                return false;
-            }
-
-            CurrentItem = Next;
-            return true;
-        }
-
-        public bool MovePrev()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
         {
-           
+            int[] X = new int[4];
+            int[] Y = new int[4];
+            int direct = 1;
+            int x = 0, y = 0;
+
+            for (int i = 0; i < 4; i++)
+            {
+                switch (direct)
+                {
+                    case 0:
+                        X[i] = x;
+                        Y[i] = y - i;
+                        break;
+                    case 1:
+                        X[i] = x + i;
+                        Y[i] = y;
+                        break;
+                    case 2:
+                        X[i] = x - i;
+                        Y[i] = y;
+                        break;
+                    case 3:
+                        X[i] = x;
+                        Y[i] = y + i;
+                        break;
+                }
+            }
+
+            Console.WriteLine("X : Y");
+
+            for (int i = 0; i < 4; i++)
+                Console.WriteLine($"{X[i]} : {Y[i]}");
         }
     }
 }
