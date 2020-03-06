@@ -5,9 +5,9 @@ using Warships.Interfaces;
 
 namespace Warships.Entities
 {
-    public class Game : BaseEntity, IGameRepository
+    public class Game : BaseEntity
     {
-        public IList<Ship> Ships { get; set; } = new List<Ship>();
-        public User Player { get; set; }
+        public EnemyBoard EnemyBoard { get; set; }
+        public MyBoard MyBoard { get; set; }
     }
 }
